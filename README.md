@@ -47,7 +47,7 @@ A biblioteca utils.h possui implementações para facilitar a manipulação de l
 
     [isEmpty(ListaObjetos l): int](#isEmpty)
 
-**Vetor**
+**STRUCT Vetor**
 ----
 Armazena dois valores float. Pode ser usado para guardar posição, velocidade, força, aceleração...
 * **Variáveis:**
@@ -56,7 +56,7 @@ Armazena dois valores float. Pode ser usado para guardar posição, velocidade, 
   
     `y=[float]`
 
-**ObjetoJogo**
+**STRUCT ObjetoJogo**
 ----
 Representação genérica de um objeto do jogo. Pode ser usado para representar nave, tiros e inimigos.
 * **Variáveis:**
@@ -69,7 +69,7 @@ Representação genérica de um objeto do jogo. Pode ser usado para representar 
 
     `idTextura=[int]`
 
-**No**
+**STRUCT No**
 ----
 Estrutura auxiliar para construir listas. NÃO CRIE ESSAS VARIÁVEIS POR CONTA PRÓPRIA, USE AS FUNÇÕES.
 * **Variáveis:**
@@ -78,7 +78,7 @@ Estrutura auxiliar para construir listas. NÃO CRIE ESSAS VARIÁVEIS POR CONTA P
   
     `obj=[ObjetoJogo]`
 
-**ListaObjetos**
+**STRUCT ListaObjetos**
 ----
 Representa uma lista de Objetos de tamanho dinâmico. NÃO CRIE ESSAS VARIÁVEIS POR CONTA PRÓPRIA, USE AS FUNÇÕES. NÃO ALTERE NEM ACESSE AS VARIÁVEIS DA LISTA DIRETAMENTE, USE AS FUNÇÕES.
 * **Variáveis:**
@@ -89,7 +89,7 @@ Representa uma lista de Objetos de tamanho dinâmico. NÃO CRIE ESSAS VARIÁVEIS
 
     `count=[int]`
 
-**new_Vetor(float x, float y: Vetor**
+**FUNÇÃO new_Vetor(float x, float y): Vetor**
 ----
 Retorna um vetor com os parâmetros fornecidos.
 * **Parâmetros:**
@@ -112,7 +112,7 @@ Retorna um vetor com os parâmetros fornecidos.
     Vetor dim = new_Vetor(10, 7);
     ```
 
-**new_ObjetoJogo(Vetor pos, Vetor vel, Vetor dim, int id): ObjetoJogo**
+**FUNÇÃO new_ObjetoJogo(Vetor pos, Vetor vel, Vetor dim, int id): ObjetoJogo**
 ----
 Retorna um ObjetoJogo com os parâmetros fornecidos.
 * **Parâmetros:**
@@ -137,7 +137,7 @@ Retorna um ObjetoJogo com os parâmetros fornecidos.
     ObjetoJogo meuObjeto = new_ObjetoJogo(pos, vel, dim, 55);
     ```
 
-**new_ObjetoJogo_Vazio(): ObjetoJogo**
+**FUNÇÃO new_ObjetoJogo_Vazio(): ObjetoJogo**
 ----
 Retorna um ObjetoJogo com os parâmetros zerados.
 * **Parâmetros:**
@@ -156,7 +156,7 @@ Retorna um ObjetoJogo com os parâmetros zerados.
     ObjetoJogo meuObjeto = new_ObjetoJogo_Vazio();
     ```
 
-**new_ListaObjetos(): ListaObjetos**
+**FUNÇÃO new_ListaObjetos(): ListaObjetos**
 ----
 Retorna uma Lista de Objetos vazia.
 * **Parâmetros:**
@@ -175,7 +175,7 @@ Retorna uma Lista de Objetos vazia.
     ListaObjetos minhaLista = new_ListaObjetos();
     ```
 
-**getObjetoJogo(ListaObjetos l, int pos): (ObjetoJogo*)**
+**FUNÇÃO getObjetoJogo(ListaObjetos l, int pos): (ObjetoJogo*)**
 ----
 Retorna um PONTEIRO para o Objeto na posição informada. Se posição estiver fora do limite da lista retorna NULL.
 * **Parâmetros:**
@@ -201,7 +201,7 @@ Retorna um PONTEIRO para o Objeto na posição informada. Se posição estiver f
     segundoObjeto->velocidade = new_Vetor(segundoObjeto->velocidade.x*2, segundoObjeto->velocidade.y*2);
     ```
 
-**append(ListaObjetos * l, ObjetoJogo obj): void**
+**FUNÇÃO append(ListaObjetos * l, ObjetoJogo obj): void**
 ----
 Adiciona um novo ObjetoJogo ao final da lista.
 * **Parâmetros:**
@@ -220,7 +220,7 @@ Adiciona um novo ObjetoJogo ao final da lista.
     append(&minhaLista, obj);
     ```
 
-**pop(ListaObjetos * l, int pos): void**
+**FUNÇÃO pop(ListaObjetos * l, int pos): void**
 ----
 Remove o objeto da posição informada. Se posição estiver fora do limite da lista não faz nada.
 * **Parâmetros:**
@@ -239,7 +239,7 @@ Remove o objeto da posição informada. Se posição estiver fora do limite da l
     pop(&minhaLista, 1);
     ```
 
-**freeLista(ListaObjetos * l): void**
+**FUNÇÃO freeLista(ListaObjetos * l): void**
 ----
 Remove todos os objetos da lista. DEVE SER CHAMADO SEMPRE ANTES DO FIM DO PROGRAMA.
 * **Parâmetros:**
@@ -256,7 +256,7 @@ Remove todos os objetos da lista. DEVE SER CHAMADO SEMPRE ANTES DO FIM DO PROGRA
     freeLista(&minhaLista);
     ```
 
-**getSize(ListaObjetos l): int**
+**FUNÇÃO getSize(ListaObjetos l): int**
 ----
 Retorna a quantidade de objetos da lista.
 * **Parâmetros:**
@@ -275,7 +275,7 @@ Retorna a quantidade de objetos da lista.
     for (int i = 0; i < getSize(minhaLista); i++){...
     ```
 
-**isEmpty(ListaObjetos l): int**
+**FUNÇÃO isEmpty(ListaObjetos l): int**
 ----
 Checa se lista está vazia. Se estiver vazia retorna 1, senão retorna 0.
 * **Parâmetros:**
