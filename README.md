@@ -17,7 +17,7 @@ $ .\galaxian.exe
 ----
 A biblioteca utils.h possui implementações para facilitar a manipulação de listas e objetos de jogo.
 
-* **Structs**
+* **Structs e Funções**
     
     [Vetor](#vetor)
   
@@ -26,10 +26,8 @@ A biblioteca utils.h possui implementações para facilitar a manipulação de l
     [No](#No)
 
     [ListaObjetos](#ListaObjetos)
-
-* **Funções**
     
-    [new_Vetor(float x, float y: Vetor](#new_Vetor)
+    [new_Vetor(float x, float y): Vetor](#new_Vetor)
 
     [new_ObjetoJogo(Vetor pos, Vetor vel, Vetor dim, int id): ObjetoJogo](#new_ObjetoJogo)
 
