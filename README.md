@@ -5,7 +5,7 @@ Trabalho 01 de Computação Gráfica
 Antes de começar, tenha certeza de que tem instalado: freeglut, glew, SOIL
 ```shell
 # Compile o projeto
-$ gcc -o galaxian .\main.c .\utils.c -lfreeglut -lglew32 -lopengl32
+$ gcc -o galaxian .\main.cpp .\utils.c -lglew32 -lSOIL -lopengl32 -lfreeglut
 
 # Rode o projeto
 $ .\galaxian.exe
