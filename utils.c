@@ -39,9 +39,9 @@ Vetor new_Vetor(float x, float y){
     return v;
 }
 
-ObjetoJogo get(ListaObjetos l, int posicao){
+ObjetoJogo * getObjetoJogo(ListaObjetos l, int posicao){
     if (posicao >= l.count || posicao < 0)
-        return new_ObjetoJogo_Vazio();
+        return NULL;
     
     int contador = 0;
     No *noAtual = l.primeiro;
@@ -52,7 +52,7 @@ ObjetoJogo get(ListaObjetos l, int posicao){
         contador += 1;
     }
 
-    return noAtual->obj;
+    return &(noAtual->obj);
 }
 
 void append(ListaObjetos *l, ObjetoJogo obj){

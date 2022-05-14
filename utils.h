@@ -34,7 +34,7 @@ ObjetoJogo new_ObjetoJogo(Vetor pos, Vetor vel, Vetor dim, int id);
 ObjetoJogo new_ObjetoJogo_Vazio();
 Vetor new_Vetor(float x, float y);
 
-ObjetoJogo get(ListaObjetos l, int pos);
+ObjetoJogo * getObjetoJogo(ListaObjetos l, int pos);
 void append(ListaObjetos * l, ObjetoJogo obj);
 void pop(ListaObjetos * l, int pos);
 void freeLista(ListaObjetos * l);
