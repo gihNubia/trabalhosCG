@@ -191,7 +191,7 @@ Representa uma lista de Objetos de tamanho dinâmico. NÃO CRIE ESSAS VARIÁVEIS
 
 **getObjetoJogo**
 ----
-* **(ObjetoJogo*) getObjetoJogo(ListaObjetos l, int pos)**
+* **ObjetoJogo * getObjetoJogo(ListaObjetos l, int pos)**
 
     Retorna um PONTEIRO para o Objeto na posição informada. Se posição estiver fora do limite da lista retorna NULL.
     
@@ -203,7 +203,7 @@ Representa uma lista de Objetos de tamanho dinâmico. NÃO CRIE ESSAS VARIÁVEIS
 
 * **Resposta:**
     ```
-    0x04232 (nesse endereço existe um Objeto)
+    0x04232 (nesse endereço existe um ObjetoJogo)
     ```
       
 * **Exemplo de uso:**
