@@ -94,7 +94,7 @@ Representa uma lista de Objetos de tamanho dinâmico. NÃO CRIE ESSAS VARIÁVEIS
 **new_Vetor**
 ----
 * **Vetor new_Vetor(float x, float y)**
-Retorna um vetor com os parâmetros fornecidos.
+    Retorna um vetor com os parâmetros fornecidos.
 * **Parâmetros:**
   
     `x=[float]`
@@ -118,7 +118,7 @@ Retorna um vetor com os parâmetros fornecidos.
 **new_ObjetoJogo**
 ----
 * **ObjetoJogo new_ObjetoJogo(Vetor pos, Vetor vel, Vetor dim, int id)**
-Retorna um ObjetoJogo com os parâmetros fornecidos.
+    Retorna um ObjetoJogo com os parâmetros fornecidos.
 * **Parâmetros:**
   
     `pos=[Vetor]`
@@ -144,7 +144,7 @@ Retorna um ObjetoJogo com os parâmetros fornecidos.
 **new_ObjetoJogo_Vazio**
 ----
 * **ObjetoJogo new_ObjetoJogo_Vazio()**
-Retorna um ObjetoJogo com os parâmetros zerados.
+    Retorna um ObjetoJogo com os parâmetros zerados.
 * **Parâmetros:**
   
     Nenhum
@@ -164,7 +164,7 @@ Retorna um ObjetoJogo com os parâmetros zerados.
 **new_ListaObjetos**
 ----
 * **ListaObjetos new_ListaObjetos()**
-Retorna uma Lista de Objetos vazia.
+    Retorna uma Lista de Objetos vazia.
 * **Parâmetros:**
   
     Nenhum
@@ -185,7 +185,7 @@ Retorna uma Lista de Objetos vazia.
 ----
 * **(ObjetoJogo*) getObjetoJogo(ListaObjetos l, int pos)**
 
-Retorna um PONTEIRO para o Objeto na posição informada. Se posição estiver fora do limite da lista retorna NULL.
+    Retorna um PONTEIRO para o Objeto na posição informada. Se posição estiver fora do limite da lista retorna NULL.
 * **Parâmetros:**
   
     `l=[ListaObjetos]`
@@ -213,7 +213,7 @@ Retorna um PONTEIRO para o Objeto na posição informada. Se posição estiver f
 ----
 * **void append(ListaObjetos * l, ObjetoJogo obj)**
 
-Adiciona um novo ObjetoJogo ao final da lista.
+    Adiciona um novo ObjetoJogo ao final da lista.
 * **Parâmetros:**
   
     `l=[ListaObjetos*]`
@@ -234,7 +234,7 @@ Adiciona um novo ObjetoJogo ao final da lista.
 ----
 * **void pop(ListaObjetos * l, int pos)**
 
-Remove o objeto da posição informada. Se posição estiver fora do limite da lista não faz nada.
+    Remove o objeto da posição informada. Se posição estiver fora do limite da lista não faz nada.
 * **Parâmetros:**
   
     `l=[ListaObjetos*]`
@@ -255,7 +255,7 @@ Remove o objeto da posição informada. Se posição estiver fora do limite da l
 ----
 * **void freeLista(ListaObjetos * l)**
 
-Remove todos os objetos da lista. DEVE SER CHAMADO SEMPRE ANTES DO FIM DO PROGRAMA.
+    Remove todos os objetos da lista. DEVE SER CHAMADO SEMPRE ANTES DO FIM DO PROGRAMA.
 * **Parâmetros:**
   
     `l=[ListaObjetos*]`
@@ -274,7 +274,7 @@ Remove todos os objetos da lista. DEVE SER CHAMADO SEMPRE ANTES DO FIM DO PROGRA
 ----
 * **int getSize(ListaObjetos l)**
 
-Retorna a quantidade de objetos da lista.
+    Retorna a quantidade de objetos da lista.
 * **Parâmetros:**
   
     `l=[ListaObjetos]`
@@ -295,7 +295,7 @@ Retorna a quantidade de objetos da lista.
 ----
 * **int isEmpty(ListaObjetos l)**
 
-Checa se lista está vazia. Se estiver vazia retorna 1, senão retorna 0.
+    Checa se lista está vazia. Se estiver vazia retorna 1, senão retorna 0.
 * **Parâmetros:**
   
     `l=[ListaObjetos]`
