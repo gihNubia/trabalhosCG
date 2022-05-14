@@ -17,37 +17,39 @@ $ .\galaxian.exe
 ----
 A biblioteca utils.h possui implementações para facilitar a manipulação de listas e objetos de jogo.
 
-* **Structs e Funções**
+* **Structs**
     
     [Vetor](#vetor)
   
-    [ObjetoJogo](#ObjetoJogo)
+    [ObjetoJogo](#objetojogo)
 
-    [No](#No)
+    [No](#no)
 
-    [ListaObjetos](#ListaObjetos)
+    [ListaObjetos](#listaobjetos)
+
+* **Funções**
     
-    [new_Vetor(float x, float y): Vetor](#new_Vetor)
+    [new_Vetor(float x, float y): Vetor](#new_vetor)
 
-    [new_ObjetoJogo(Vetor pos, Vetor vel, Vetor dim, int id): ObjetoJogo](#new_ObjetoJogo)
+    [new_ObjetoJogo(Vetor pos, Vetor vel, Vetor dim, int id): ObjetoJogo](#new_objetojogo)
 
-    [new_ObjetoJogo_Vazio(): ObjetoJogo](#new_ObjetoJogo_Vazio)
+    [new_ObjetoJogo_Vazio(): ObjetoJogo](#new_objetojogo_vazio)
 
-    [new_ListaObjetos(): ListaObjetos](#new_ListaObjetos)
+    [new_ListaObjetos(): ListaObjetos](#new_listaobjetos)
 
-    [getObjetoJogo(ListaObjetos l, int pos): ObjetoJogo*](#getObjetoJogo)
+    [getObjetoJogo(ListaObjetos l, int pos): ObjetoJogo*](#getobjetojogo)
 
     [append(ListaObjetos * l, ObjetoJogo obj): void](#append)
 
     [pop(ListaObjetos * l, int pos): void](#pop)
 
-    [freeLista(ListaObjetos * l): void](#freeLista)
+    [freeLista(ListaObjetos * l): void](#freelista)
 
-    [getSize(ListaObjetos l): int](#getSize)
+    [getSize(ListaObjetos l): int](#getsize)
 
-    [isEmpty(ListaObjetos l): int](#isEmpty)
+    [isEmpty(ListaObjetos l): int](#isempty)
 
-**STRUCT Vetor**
+**Vetor**
 ----
 Armazena dois valores float. Pode ser usado para guardar posição, velocidade, força, aceleração...
 * **Variáveis:**
@@ -56,7 +58,7 @@ Armazena dois valores float. Pode ser usado para guardar posição, velocidade, 
   
     `y=[float]`
 
-**STRUCT ObjetoJogo**
+**ObjetoJogo**
 ----
 Representação genérica de um objeto do jogo. Pode ser usado para representar nave, tiros e inimigos.
 * **Variáveis:**
@@ -69,7 +71,7 @@ Representação genérica de um objeto do jogo. Pode ser usado para representar 
 
     `idTextura=[int]`
 
-**STRUCT No**
+**No**
 ----
 Estrutura auxiliar para construir listas. NÃO CRIE ESSAS VARIÁVEIS POR CONTA PRÓPRIA, USE AS FUNÇÕES.
 * **Variáveis:**
@@ -78,7 +80,7 @@ Estrutura auxiliar para construir listas. NÃO CRIE ESSAS VARIÁVEIS POR CONTA P
   
     `obj=[ObjetoJogo]`
 
-**STRUCT ListaObjetos**
+**ListaObjetos**
 ----
 Representa uma lista de Objetos de tamanho dinâmico. NÃO CRIE ESSAS VARIÁVEIS POR CONTA PRÓPRIA, USE AS FUNÇÕES. NÃO ALTERE NEM ACESSE AS VARIÁVEIS DA LISTA DIRETAMENTE, USE AS FUNÇÕES.
 * **Variáveis:**
@@ -89,8 +91,9 @@ Representa uma lista de Objetos de tamanho dinâmico. NÃO CRIE ESSAS VARIÁVEIS
 
     `count=[int]`
 
-**FUNÇÃO new_Vetor(float x, float y): Vetor**
+**new_Vetor**
 ----
+* **Vetor new_Vetor(float x, float y)**
 Retorna um vetor com os parâmetros fornecidos.
 * **Parâmetros:**
   
@@ -112,8 +115,9 @@ Retorna um vetor com os parâmetros fornecidos.
     Vetor dim = new_Vetor(10, 7);
     ```
 
-**FUNÇÃO new_ObjetoJogo(Vetor pos, Vetor vel, Vetor dim, int id): ObjetoJogo**
+**new_ObjetoJogo**
 ----
+* **ObjetoJogo new_ObjetoJogo(Vetor pos, Vetor vel, Vetor dim, int id)**
 Retorna um ObjetoJogo com os parâmetros fornecidos.
 * **Parâmetros:**
   
@@ -137,8 +141,9 @@ Retorna um ObjetoJogo com os parâmetros fornecidos.
     ObjetoJogo meuObjeto = new_ObjetoJogo(pos, vel, dim, 55);
     ```
 
-**FUNÇÃO new_ObjetoJogo_Vazio(): ObjetoJogo**
+**new_ObjetoJogo_Vazio**
 ----
+* **ObjetoJogo new_ObjetoJogo_Vazio()**
 Retorna um ObjetoJogo com os parâmetros zerados.
 * **Parâmetros:**
   
@@ -156,8 +161,9 @@ Retorna um ObjetoJogo com os parâmetros zerados.
     ObjetoJogo meuObjeto = new_ObjetoJogo_Vazio();
     ```
 
-**FUNÇÃO new_ListaObjetos(): ListaObjetos**
+**new_ListaObjetos**
 ----
+* **ListaObjetos new_ListaObjetos()**
 Retorna uma Lista de Objetos vazia.
 * **Parâmetros:**
   
@@ -175,8 +181,10 @@ Retorna uma Lista de Objetos vazia.
     ListaObjetos minhaLista = new_ListaObjetos();
     ```
 
-**FUNÇÃO getObjetoJogo(ListaObjetos l, int pos): (ObjetoJogo*)**
+**getObjetoJogo**
 ----
+* **(ObjetoJogo*) getObjetoJogo(ListaObjetos l, int pos)**
+
 Retorna um PONTEIRO para o Objeto na posição informada. Se posição estiver fora do limite da lista retorna NULL.
 * **Parâmetros:**
   
@@ -201,8 +209,10 @@ Retorna um PONTEIRO para o Objeto na posição informada. Se posição estiver f
     segundoObjeto->velocidade = new_Vetor(segundoObjeto->velocidade.x*2, segundoObjeto->velocidade.y*2);
     ```
 
-**FUNÇÃO append(ListaObjetos * l, ObjetoJogo obj): void**
+**append**
 ----
+* **void append(ListaObjetos * l, ObjetoJogo obj)**
+
 Adiciona um novo ObjetoJogo ao final da lista.
 * **Parâmetros:**
   
@@ -220,8 +230,10 @@ Adiciona um novo ObjetoJogo ao final da lista.
     append(&minhaLista, obj);
     ```
 
-**FUNÇÃO pop(ListaObjetos * l, int pos): void**
+**pop**
 ----
+* **void pop(ListaObjetos * l, int pos)**
+
 Remove o objeto da posição informada. Se posição estiver fora do limite da lista não faz nada.
 * **Parâmetros:**
   
@@ -239,8 +251,10 @@ Remove o objeto da posição informada. Se posição estiver fora do limite da l
     pop(&minhaLista, 1);
     ```
 
-**FUNÇÃO freeLista(ListaObjetos * l): void**
+**freeLista**
 ----
+* **void freeLista(ListaObjetos * l)**
+
 Remove todos os objetos da lista. DEVE SER CHAMADO SEMPRE ANTES DO FIM DO PROGRAMA.
 * **Parâmetros:**
   
@@ -256,8 +270,10 @@ Remove todos os objetos da lista. DEVE SER CHAMADO SEMPRE ANTES DO FIM DO PROGRA
     freeLista(&minhaLista);
     ```
 
-**FUNÇÃO getSize(ListaObjetos l): int**
+**getSize**
 ----
+* **int getSize(ListaObjetos l)**
+
 Retorna a quantidade de objetos da lista.
 * **Parâmetros:**
   
@@ -275,8 +291,10 @@ Retorna a quantidade de objetos da lista.
     for (int i = 0; i < getSize(minhaLista); i++){...
     ```
 
-**FUNÇÃO isEmpty(ListaObjetos l): int**
+**isEmpty**
 ----
+* **int isEmpty(ListaObjetos l)**
+
 Checa se lista está vazia. Se estiver vazia retorna 1, senão retorna 0.
 * **Parâmetros:**
   
