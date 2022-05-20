@@ -9,7 +9,35 @@
 // Aqui declaramos os objetos e listas de objeto
 ObjetoJogo nave;
 ListaObjetos tiros;
+ListaObjetos inimigos;
+
+int contador = 0;
+int sentido = 1;
+
 // TODO: Declarar lista de inimigos
+void PosicaoInimigos(){
+    float linha = 12.5;
+    float coluna = 90;
+
+    for(int i =0; i<2; i++){
+        for(int j=0; j<7; j++){
+            ObjetoJogo inimigo = new_ObjetoJogo(
+            new_Vetor(linha, coluna),   // posicao
+            new_Vetor(0, 0),    // velocidade inicial
+            new_Vetor(4, 4),    // tamanho
+            0  // textura
+        ); 
+
+        append(&inimigos, inimigo);
+
+        //incremento
+        linha += 12.5;
+        }
+        linha = 6.25;
+        coluna-=15;
+    }
+    
+}
 
 
 GLuint carregaTextura(char* arquivo) {
@@ -67,7 +95,9 @@ void desenhaMinhaCena() {
         desenhaObjeto(*getObjetoJogo(tiros, i));
     
     // TODO: desenhar inimigos
-
+     for(int i = 0; i < getSize(inimigos); i++)
+        desenhaObjeto(*getObjetoJogo(inimigos, i));
+    
     glutSwapBuffers();
 }
 
@@ -88,6 +118,7 @@ void teclaPressionada(unsigned char key, int x, int y) {
     switch(key) {
         case 27:
             freeLista(&tiros);
+            freeLista(&inimigos);
             // TODO: liberar lista de inimigos
             exit(0);
             break;
@@ -113,12 +144,12 @@ void setaPressionada(int key, int x, int y) {
     switch(key) {
         case GLUT_KEY_RIGHT:  //seta direita
             // nave tem velocidade para direita ->
-            nave.velocidade.x=0.5;
+            nave.velocidade.x=1.25;
             nave.velocidade.y=0;
             break;
         case GLUT_KEY_LEFT: //seta esquerda
             // nave tem velocidade para esquerda <-
-            nave.velocidade.x=-0.5;
+            nave.velocidade.x=-1.25;
             nave.velocidade.y=0;
             break;
 
@@ -158,10 +189,30 @@ void atualizaCena(int valor){
         tiro->posicao.y += tiro->velocidade.y;
     }
 
+    // se a contagem for maior que 20 direcao *=-1 e contagem =0
+    if(contador >= 8){
+        sentido*=-1;
+        for (int i = 0; i < getSize(inimigos); i++){
+            ObjetoJogo * inimigo = getObjetoJogo(inimigos, i);
+            inimigo->velocidade.x = sentido;
+            inimigo->velocidade.y = -0.25;
+        }
+        contador=0;
+    }
+    contador++;
+
+    
+
     // remove todos os tiros que sairam da tela
     removeTirosFora();
 
     // TODO: atualizar posicao e velocidade dos inimigos
+    for (int i = 0; i < getSize(inimigos); i++){
+        ObjetoJogo * inimigo = getObjetoJogo(inimigos, i);
+
+        inimigo->posicao.x += inimigo->velocidade.x;
+        inimigo->posicao.y += inimigo->velocidade.y;
+    }
 
     // TODO: remover tiros e inimigos que colidiram
 
@@ -171,7 +222,7 @@ void atualizaCena(int valor){
     glutPostRedisplay();
 
     // manda chamar esta função novamente daqui 0,33s
-    glutTimerFunc(33, atualizaCena, 0);
+    glutTimerFunc(38, atualizaCena, 0);
 }
 
 // atribui valores iniciais dos ObjetoJogo
@@ -182,7 +233,7 @@ void inicializa() {
     nave = new_ObjetoJogo(
         new_Vetor(50, 5),   // posicao
         new_Vetor(0, 0),    // velocidade inicial
-        new_Vetor(6, 6),    // tamanho
+        new_Vetor(10, 10),    // tamanho
         carregaTextura("pixel-art-spacecraft.png")  // textura
     );
 
@@ -190,6 +241,10 @@ void inicializa() {
     tiros = new_ListaObjetos();
 
     // TODO: criar lista cheia de inimigos
+    inimigos = new_ListaObjetos();
+
+    PosicaoInimigos();
+    
 }
 
 int main(int argc, char** argv) {
@@ -202,7 +257,7 @@ int main(int argc, char** argv) {
     glutInitWindowSize(500, 500);
     glutInitWindowPosition(100, 100);
 
-    glutCreateWindow("Movimentacao Horizontal");
+    glutCreateWindow("----------------Galaxian----------------");
 
 
     // Callback de desenhar cena
@@ -224,6 +279,8 @@ int main(int argc, char** argv) {
 
     freeLista(&tiros);
     // TODO: liberar lista de inimigos
+    freeLista(&inimigos);
+    
 
     return 0;
 }
