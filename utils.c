@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+
+// ------------ CONSTRUTORES ----------------//
 ListaObjetos new_ListaObjetos(){
     ListaObjetos l;
     l.primeiro = NULL;
@@ -38,6 +40,8 @@ Vetor new_Vetor(float x, float y){
 
     return v;
 }
+
+// --------- METODOS DE ListaObjetos -------- //
 
 ObjetoJogo * getObjetoJogo(ListaObjetos l, int posicao){
     if (posicao >= l.count || posicao < 0)
@@ -122,6 +126,8 @@ int isEmpty(ListaObjetos l){
     return l.count == 0 ? 1 : 0;
 }
 
+// --------- METODOS DE ObjetoJogo -------- //
+
 void printObjetoJogo(ObjetoJogo obj){
     printf("Velocidade: ");
     printVetor(obj.velocidade);
@@ -137,6 +143,17 @@ void printObjetoJogo(ObjetoJogo obj){
 
     printf("Id: %i \n", obj.idTextura);
 }
+
+int objetoColideCom(ObjetoJogo obj1, ObjetoJogo obj2){
+    if (obj1.posicao.x < obj2.posicao.x + obj2.dimensoes.x  // se houve colisao no eixo x
+     && obj1.posicao.x + obj1.dimensoes.x > obj2.posicao.x
+     && obj1.posicao.y < obj2.posicao.y + obj2.dimensoes.y  // e colisao no eixo y
+     && obj1.posicao.y + obj1.dimensoes.y > obj2.posicao.y)
+        return 1;
+    return 0;
+}
+
+// --------- METODOS DE Vetor -------- //
 
 void printVetor(Vetor vetor){
     printf("(%f, %f)", vetor.x, vetor.y);

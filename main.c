@@ -11,35 +11,53 @@ ObjetoJogo nave;
 ListaObjetos tiros;
 ListaObjetos inimigos;
 
-int contador = 0;
-int sentido = 1;
+// variaveis de pontuacao
+// BUG: tente declarar essa variavel embaixo de direcoes
+float pontos;
 
-// TODO: Declarar lista de inimigos
-void PosicaoInimigos(){
-    float linha = 12.5;
+// variaveis de controle do movimento dos inimigos
+int contadorMax = 63;
+int contador = 0;
+Vetor direcoes[4];
+
+void liberarMemoria(){
+    freeLista(&tiros);
+    freeLista(&inimigos);
+}
+
+// preenche lista de inimigos
+void criarInimigos(){
+    float linha = 0;
     float coluna = 90;
 
+    int tamanhoInimigo = 4;
+    float espacoEntreInimigos = 8.5;
+    int qtdInimigos = 7;
+    int tamanhoDoMundo = 100;
+    int espacoLateral = (contadorMax + 1)/4;
+
     for(int i =0; i<2; i++){
-        for(int j=0; j<7; j++){
+        for(int j=0; j<qtdInimigos; j++){
             ObjetoJogo inimigo = new_ObjetoJogo(
-            new_Vetor(linha, coluna),   // posicao
-            new_Vetor(0, 0),    // velocidade inicial
-            new_Vetor(4, 4),    // tamanho
-            0  // textura
-        ); 
+                new_Vetor(linha, coluna),   // posicao
+                new_Vetor(0, 0),    // velocidade inicial
+                new_Vetor(tamanhoInimigo, tamanhoInimigo),    // tamanho
+                0  // textura
+            ); 
 
-        append(&inimigos, inimigo);
+            append(&inimigos, inimigo);
 
-        //incremento
-        linha += 12.5;
+            //incremento
+            linha += tamanhoInimigo + espacoEntreInimigos;
         }
-        linha = 6.25;
+
+        linha = tamanhoDoMundo - (tamanhoInimigo*qtdInimigos + espacoEntreInimigos*(qtdInimigos-1) + espacoLateral);
         coluna-=15;
     }
     
 }
 
-
+// carrega textura do arquivo indicado e retorna seu id
 GLuint carregaTextura(char* arquivo) {
     GLuint idTextura = SOIL_load_OGL_texture(
         arquivo,
@@ -51,36 +69,65 @@ GLuint carregaTextura(char* arquivo) {
     return idTextura;
 }
 
+
+
+// remove os tiros que estao fora do gortho
 void removeTirosFora(){
-    for (int i = 0; i < getSize(tiros); i++){
+    // percorrer lista ao contrario para evitar erros de posicao ao remover itens
+    for (int i = getSize(tiros) - 1; i >= 0; i--){
         if (getObjetoJogo(tiros, i)->posicao.y > 100){
             pop(&tiros, i);
-            return removeTirosFora();
         }
     }
     return;
+}
+
+void removeInimigosAcertados(){
+    // percorrer listas ao contrario para evitar erros de posicao ao remover itens
+    for (int i = getSize(tiros) - 1; i >= 0; i--){
+        for (int j = getSize(inimigos) - 1; j >= 0; j--){
+            if (objetoColideCom(*getObjetoJogo(tiros, i), *getObjetoJogo(inimigos, j))){
+                pontos = pontos + 100 - (*getObjetoJogo(inimigos, j)).posicao.y;
+                pop(&tiros, i);
+                pop(&inimigos, j);
+                break;
+            }
+        }
+    }
 }
 
 // Recebe um ObjetoJogo e printa ele na tela
 void desenhaObjeto(ObjetoJogo obj) {
     glColor3f(0, 1, 0);
     glEnable(GL_TEXTURE_2D);
-    // TODO: Fazer a textura funcionar
-    glBindTexture(GL_TEXTURE_2D, obj.idTextura);
-    glBegin(GL_TRIANGLE_FAN);
-        //glTexCoord2f(obj.posicao.x-5, obj.posicao.y-5);
-        glVertex3f(obj.posicao.x+obj.dimensoes.x, obj.posicao.y, 0); //baixo direito
+    glPushMatrix();
+        // Move o sistema de coordenadas para a posição onde deseja-se desenhar
+        glTranslatef(obj.posicao.x, obj.posicao.y, 0);
+        // TODO: Fazer a textura funcionar
+        glBindTexture(GL_TEXTURE_2D, obj.idTextura);
+        glBegin(GL_TRIANGLE_FAN);
+            glVertex3f(obj.dimensoes.x, 0, 0); //baixo direito
 
-        //glTexCoord2f(obj.posicao.x-5, obj.posicao.y+5);
-        glVertex3f(obj.posicao.x+obj.dimensoes.x, obj.posicao.y+obj.dimensoes.y, 0); //cima direito
+            glVertex3f(obj.dimensoes.x, obj.dimensoes.y, 0); //cima direito
 
-        //glTexCoord2f(obj.posicao.x+5, obj.posicao.y+5);
-        glVertex3f(obj.posicao.x, obj.posicao.y+obj.dimensoes.y, 0); //cima esquerdo
+            glVertex3f(0, obj.dimensoes.y, 0); //cima esquerdo
 
-        //glTexCoord2f(obj.posicao.x+5, obj.posicao.y-5);
-        glVertex3f(obj.posicao.x, obj.posicao.y, 0); //baixo esquerdo
-    glEnd();
+            glVertex3f(0, 0, 0); //baixo esquerdo
+        glEnd();
+    glPopMatrix();
     glDisable(GL_TEXTURE_2D);
+}
+
+void informarPontuacao() {
+    glRasterPos3f(5, 95, 0);
+
+    char buf[10];
+  
+    gcvt(pontos, 10, buf);
+
+    for (int i = 0; i < strlen(buf); i++) {
+        glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, buf[i]);
+    }
 }
 
 // Callback: Cena deve ser desenhada
@@ -94,9 +141,11 @@ void desenhaMinhaCena() {
     for(int i = 0; i < getSize(tiros); i++)
         desenhaObjeto(*getObjetoJogo(tiros, i));
     
-    // TODO: desenhar inimigos
+    // desenhar inimigos
      for(int i = 0; i < getSize(inimigos); i++)
         desenhaObjeto(*getObjetoJogo(inimigos, i));
+
+    informarPontuacao();
     
     glutSwapBuffers();
 }
@@ -117,9 +166,6 @@ void redimensionada(int width, int height) {
 void teclaPressionada(unsigned char key, int x, int y) {
     switch(key) {
         case 27:
-            freeLista(&tiros);
-            freeLista(&inimigos);
-            // TODO: liberar lista de inimigos
             exit(0);
             break;
         case 32:    // espaço
@@ -179,7 +225,12 @@ void atualizaCena(int valor){
     // atualiza posicao da nave
     nave.posicao.x += nave.velocidade.x;
     nave.posicao.y += nave.velocidade.y;
-    // TODO: Checar se posicao esta fora do gortho
+
+    // checar se posicao da nave esta fora do gortho
+    if (nave.posicao.x < 0 || nave.posicao.x + nave.dimensoes.x > 100) // se eixo x saiu do mundo
+        nave.posicao.x -= nave.velocidade.x;    // desfazer movimento no eixo x
+    if (nave.posicao.y < 0 || nave.posicao.y + nave.dimensoes.y > 100) // se eixo y saiu do mundo
+        nave.posicao.y -= nave.velocidade.y;    // desfazer movimento no eixo y
 
     // atualiza posicao dos tiros
     for (int i = 0; i < getSize(tiros); i++){
@@ -189,24 +240,7 @@ void atualizaCena(int valor){
         tiro->posicao.y += tiro->velocidade.y;
     }
 
-    // se a contagem for maior que 20 direcao *=-1 e contagem =0
-    if(contador >= 8){
-        sentido*=-1;
-        for (int i = 0; i < getSize(inimigos); i++){
-            ObjetoJogo * inimigo = getObjetoJogo(inimigos, i);
-            inimigo->velocidade.x = sentido;
-            inimigo->velocidade.y = -0.25;
-        }
-        contador=0;
-    }
-    contador++;
-
-    
-
-    // remove todos os tiros que sairam da tela
-    removeTirosFora();
-
-    // TODO: atualizar posicao e velocidade dos inimigos
+    // atualizar posicao dos inimigos
     for (int i = 0; i < getSize(inimigos); i++){
         ObjetoJogo * inimigo = getObjetoJogo(inimigos, i);
 
@@ -214,7 +248,25 @@ void atualizaCena(int valor){
         inimigo->posicao.y += inimigo->velocidade.y;
     }
 
-    // TODO: remover tiros e inimigos que colidiram
+    // contador nunca eh maior que o maximo...
+    contador += 1;
+    if (contador > contadorMax)
+        contador = 0;
+    // ...portanto essa posicao nunca eh maior que 3
+    Vetor direcao = direcoes[contador/(contadorMax/4)];
+
+    // atualizar direcao dos inimigos
+    for (int i = 0; i < getSize(inimigos); i++){
+        ObjetoJogo * inimigo = getObjetoJogo(inimigos, i);
+        inimigo->velocidade.x = direcao.x * 1;
+        inimigo->velocidade.y = direcao.y * 0.25;
+    }
+
+    // remove todos os tiros que sairam da tela
+    removeTirosFora();
+
+    // remover tiros e inimigos que colidiram
+    removeInimigosAcertados();
 
     // TODO: checar se inimigo alcancou a nave e terminar o jogo
 
@@ -222,7 +274,7 @@ void atualizaCena(int valor){
     glutPostRedisplay();
 
     // manda chamar esta função novamente daqui 0,33s
-    glutTimerFunc(38, atualizaCena, 0);
+    glutTimerFunc(33, atualizaCena, 0);
 }
 
 // atribui valores iniciais dos ObjetoJogo
@@ -240,11 +292,16 @@ void inicializa() {
     // cria lista vazia de tiros
     tiros = new_ListaObjetos();
 
-    // TODO: criar lista cheia de inimigos
+    // cria lista cheia de inimigos
     inimigos = new_ListaObjetos();
+    criarInimigos();
 
-    PosicaoInimigos();
+    direcoes[0] = new_Vetor(1,0);   //direita
+    direcoes[1] = new_Vetor(0, -1); //baixo
+    direcoes[2] = new_Vetor(-1, 0); //esquerda
+    direcoes[3] = new_Vetor(0, -1); //baixo
     
+    pontos = 0;
 }
 
 int main(int argc, char** argv) {
@@ -275,12 +332,10 @@ int main(int argc, char** argv) {
     // atribui valores iniciais dos ObjetoJogo
     inicializa();
 
-    glutMainLoop();
+    // quando programa parar de executar libera a memoria
+    atexit(liberarMemoria);
 
-    freeLista(&tiros);
-    // TODO: liberar lista de inimigos
-    freeLista(&inimigos);
-    
+    glutMainLoop();
 
     return 0;
 }
