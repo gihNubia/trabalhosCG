@@ -11,6 +11,12 @@ ObjetoJogo nave;
 ListaObjetos tiros;
 ListaObjetos inimigos;
 
+// id das texturas
+int idTexturaNave;
+int idTexturaInimigo;
+int idTexturaTiro;
+int idTexturaFundo;
+
 // variaveis de pontuacao
 // BUG: tente declarar essa variavel embaixo de direcoes
 float pontos;
@@ -42,7 +48,7 @@ void criarInimigos(){
                 new_Vetor(linha, coluna),   // posicao
                 new_Vetor(0, 0),    // velocidade inicial
                 new_Vetor(tamanhoInimigo, tamanhoInimigo),    // tamanho
-                0  // textura
+                idTexturaInimigo  // textura
             ); 
 
             append(&inimigos, inimigo);
@@ -96,26 +102,51 @@ void removeInimigosAcertados(){
     }
 }
 
+void desenhaFundo(){
+    int tamanhoMundo = 100;
+    glColor3f(1, 1, 1);
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, idTexturaFundo);
+    glBegin(GL_TRIANGLE_FAN);
+        glTexCoord2f(1, 0);
+        glVertex3f(tamanhoMundo, 0, 0); //baixo direito
+
+        glTexCoord2f(1, 1);
+        glVertex3f(tamanhoMundo, tamanhoMundo, 0); //cima direito
+
+        glTexCoord2f(0, 1);
+        glVertex3f(0, tamanhoMundo, 0); //cima esquerdo
+
+        glTexCoord2f(0, 0);
+        glVertex3f(0, 0, 0); //baixo esquerdo
+    glEnd();
+    glDisable(GL_TEXTURE_2D);
+}
+
 // Recebe um ObjetoJogo e printa ele na tela
 void desenhaObjeto(ObjetoJogo obj) {
-    glColor3f(0, 1, 0);
-    glEnable(GL_TEXTURE_2D);
+    glColor3f(1, 1, 1);
     glPushMatrix();
         // Move o sistema de coordenadas para a posição onde deseja-se desenhar
         glTranslatef(obj.posicao.x, obj.posicao.y, 0);
         // TODO: Fazer a textura funcionar
+        glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, obj.idTextura);
         glBegin(GL_TRIANGLE_FAN);
+            glTexCoord2f(1, 0);
             glVertex3f(obj.dimensoes.x, 0, 0); //baixo direito
 
+            glTexCoord2f(1, 1);
             glVertex3f(obj.dimensoes.x, obj.dimensoes.y, 0); //cima direito
 
+            glTexCoord2f(0, 1);
             glVertex3f(0, obj.dimensoes.y, 0); //cima esquerdo
 
+            glTexCoord2f(0, 0);
             glVertex3f(0, 0, 0); //baixo esquerdo
         glEnd();
+        glDisable(GL_TEXTURE_2D);
     glPopMatrix();
-    glDisable(GL_TEXTURE_2D);
 }
 
 void informarPontuacao() {
@@ -133,6 +164,8 @@ void informarPontuacao() {
 // Callback: Cena deve ser desenhada
 void desenhaMinhaCena() {
     glClear(GL_COLOR_BUFFER_BIT);
+
+    desenhaFundo();
 
     // desenha nave
     desenhaObjeto(nave);
@@ -174,7 +207,7 @@ void teclaPressionada(unsigned char key, int x, int y) {
                 new_Vetor(nave.posicao.x + nave.dimensoes.x/2, nave.posicao.y + nave.dimensoes.y),  // tiro sai do meio da nave
                 new_Vetor(0, 2),    // velocidade apenas na vertical
                 new_Vetor(1, 3),    // (largura, altura) do tiro
-                0   // TODO: Textura do tiro
+                idTexturaTiro   // TODO: Textura do tiro
             );
             append(&tiros, novoTiro);
 
@@ -279,15 +312,29 @@ void atualizaCena(int valor){
 
 // atribui valores iniciais dos ObjetoJogo
 void inicializa() {
-    glClearColor(1, 1, 1, 1); // branco
+    glClearColor(0, 0, 0, 1); // branco
+
+    // habilita mesclagem de cores, para termos suporte a texturas
+    // com transparência
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+    idTexturaNave = carregaTextura("assets/pixel-art-spacecraft.png");
+    idTexturaInimigo = carregaTextura("assets/inimigo.png");
+    idTexturaTiro = carregaTextura("assets/tiro.png");
+    idTexturaFundo = carregaTextura("assets/fundo.png");
 
     // cria nave
     nave = new_ObjetoJogo(
         new_Vetor(50, 5),   // posicao
         new_Vetor(0, 0),    // velocidade inicial
         new_Vetor(10, 10),    // tamanho
-        carregaTextura("pixel-art-spacecraft.png")  // textura
+        idTexturaNave  // textura
     );
+
+    printf("%i\n", nave.idTextura);
 
     // cria lista vazia de tiros
     tiros = new_ListaObjetos();
