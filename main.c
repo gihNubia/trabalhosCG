@@ -23,17 +23,22 @@ int idTexturaPause;
 // BUG: tente declarar essa variavel embaixo de direcoes
 float pontos;
 
+// variaveis de controle da nave
+int vidas;
+
 // variaveis de controle de tiro
 int podeAtirar;
 
 // variaveis de controle do movimento dos inimigos
 int contadorMax = 63;
 int contador = 0;
+int fase;
 Vetor direcoes[4];
 
 //game state
 enum {InGame, GameOver, Pause} gameState;
 
+// recebe o id de uma textura e desenha na tela
 void desenhaFundo(int idTextura){
     int tamanhoMundo = 100;
     glColor3f(1, 1, 1);
@@ -136,7 +141,6 @@ void desenhaObjeto(ObjetoJogo obj) {
     glPushMatrix();
         // Move o sistema de coordenadas para a posição onde deseja-se desenhar
         glTranslatef(obj.posicao.x, obj.posicao.y, 0);
-        // TODO: Fazer a textura funcionar
         glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, obj.idTextura);
         glBegin(GL_TRIANGLE_FAN);
@@ -158,11 +162,50 @@ void desenhaObjeto(ObjetoJogo obj) {
 
 // printa a pontuacao na tela
 void informarPontuacao() {
+    glRasterPos3f(65, 95, 0);
+
+    char buf[10];
+
+    gcvt(pontos, 10, buf);
+
+    for (int i = 0; i < strlen(buf); i++) {
+        glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, buf[i]);
+    }
+}
+
+// printa a fase na tela
+void informarFase() {
     glRasterPos3f(5, 95, 0);
 
     char buf[10];
-  
-    gcvt(pontos, 10, buf);
+
+    gcvt(fase, 10, buf);
+
+    glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, 'F');
+    glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, 'A');
+    glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, 'S');
+    glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, 'E');
+    glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, ':');
+
+    for (int i = 0; i < strlen(buf); i++) {
+        glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, buf[i]);
+    }
+}
+
+// printa a vidas na tela
+void informarVidas() {
+    glRasterPos3f(25, 95, 0);
+
+    char buf[10];
+
+    gcvt(vidas, 10, buf);
+
+    glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, 'V');
+    glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, 'I');
+    glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, 'D');
+    glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, 'A');
+    glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, 'S');
+    glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, ':');
 
     for (int i = 0; i < strlen(buf); i++) {
         glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, buf[i]);
@@ -172,6 +215,8 @@ void informarPontuacao() {
 // Callback: Cena deve ser desenhada
 void desenhaMinhaCena() {
     glClear(GL_COLOR_BUFFER_BIT);
+
+    // se estiver jogando e vivo
     if(gameState == InGame){
         desenhaFundo(idTexturaFundo);
 
@@ -187,14 +232,17 @@ void desenhaMinhaCena() {
             desenhaObjeto(*getObjetoJogo(inimigos, i));
 
         informarPontuacao();
+        informarFase();
+        informarVidas();
     }
+    // se estiver morto
     else if(gameState == GameOver){
         desenhaFundo(idTexturaGameOver);
     }
+    // se estiver pausado
     else if(gameState == Pause){
         desenhaFundo(idTexturaPause);
     }
-    
     
     glutSwapBuffers();
 }
@@ -207,14 +255,14 @@ void redimensionada(int width, int height) {
 
     float razaoAspectoJanela = ((float)width)/height;
     float razaoAspectoMundo = ((float) 100)/ 100;
-    // se a janela está menos larga do que o mundo (16:9)...
+    // se a janela está menos larga do que o mundo
     if (razaoAspectoJanela < razaoAspectoMundo) {
         // vamos colocar barras verticais (acima e abaixo)
         float hViewport = width / razaoAspectoMundo;
         float yViewport = (height - hViewport)/2;
         glViewport(0, yViewport, width, hViewport);
     }
-    // se a janela está mais larga (achatada) do que o mundo (16:9)...
+    // se a janela está mais larga (achatada) do que o mundo
     else if (razaoAspectoJanela > razaoAspectoMundo) {
         // vamos colocar barras horizontais (esquerda e direita)
         float wViewport = ((float)height) * razaoAspectoMundo;
@@ -228,9 +276,11 @@ void redimensionada(int width, int height) {
     glLoadIdentity();
 }
 
+// quando o jogador reiniciar o jogo
 void reiniciar(){
     contador=0;
     podeAtirar=1;
+    fase=1;
     gameState=InGame;
 
     // cria nave
@@ -249,6 +299,9 @@ void reiniciar(){
     inimigos = new_ListaObjetos();
     criarInimigos();
 
+    vidas = 3;
+
+    // zera a pontuacao
     pontos = 0;
 }
 
@@ -264,14 +317,15 @@ void inicializa() {
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
     idTexturaNave = carregaTextura("assets/spaceship.png");
-    idTexturaInimigo = carregaTextura("assets/inimigo.png");
+    idTexturaInimigo = carregaTextura("assets/fogo.png");
     idTexturaTiro = carregaTextura("assets/tiro.png");
-    idTexturaFundo = carregaTextura("assets/fundo.png");
+    idTexturaFundo = carregaTextura("assets/space.jpg");
     idTexturaGameOver = carregaTextura("assets/game-over.png");
     idTexturaPause = carregaTextura("assets/pause.png");
 
     contador=0;
     podeAtirar=1;
+    fase=1;
     gameState=InGame;
 
     // cria nave
@@ -295,25 +349,30 @@ void inicializa() {
     direcoes[2] = new_Vetor(-1, 0); //esquerda
     direcoes[3] = new_Vetor(0, -1); //baixo
     
+    vidas = 3;
+
     pontos = 0;
 }
 
 // Callback: usuario pressionou uma tecla
 void teclaPressionada(unsigned char key, int x, int y) {
     switch(key) {
-        case 27:
+        case 27:    // esc
             exit(0);
             break;
-        case 32:    // espaço
+        case 32:    // espaco
+            // se estiver jogando e pode atirar
             if(gameState == InGame && podeAtirar == 1){
                // cria um tiro e o adiciona na lista de tiros
                 ObjetoJogo novoTiro = new_ObjetoJogo(
                     new_Vetor(nave.posicao.x + nave.dimensoes.x/2, nave.posicao.y + nave.dimensoes.y),  // tiro sai do meio da nave
                     new_Vetor(0, 2),    // velocidade apenas na vertical
                     new_Vetor(1, 3),    // (largura, altura) do tiro
-                    idTexturaTiro   // TODO: Textura do tiro
+                    idTexturaTiro   // Textura do tiro
                 );
-                append(&tiros, novoTiro); 
+                append(&tiros, novoTiro);
+
+                // nao pode atirar ate tirar o dedo do espaco
                 podeAtirar=0;
             }
             
@@ -325,9 +384,11 @@ void teclaPressionada(unsigned char key, int x, int y) {
             break;
 
         case 112: // p
+            // se estiver em jogo, pause
             if(gameState == InGame){
                 gameState = Pause;
             }
+            // se estiver em pause, play
             else if(gameState == Pause){
                 gameState = InGame;
             }
@@ -340,22 +401,22 @@ void teclaPressionada(unsigned char key, int x, int y) {
 
 // Callback: usuario pressionou uma seta
 void setaPressionada(int key, int x, int y) {
+    // so muda se estiver em jogo
     if(gameState == InGame){
         switch(key) {
-        
-        case GLUT_KEY_RIGHT:  //seta direita
-            // nave tem velocidade para direita ->
-            nave.velocidade.x=1.25;
-            nave.velocidade.y=0;
-            break;
-        case GLUT_KEY_LEFT: //seta esquerda
-            // nave tem velocidade para esquerda <-
-            nave.velocidade.x=-1.25;
-            nave.velocidade.y=0;
-            break;
+            case GLUT_KEY_RIGHT:  //seta direita
+                // nave tem velocidade para direita ->
+                nave.velocidade.x=1.25;
+                nave.velocidade.y=0;
+                break;
+            case GLUT_KEY_LEFT: //seta esquerda
+                // nave tem velocidade para esquerda <-
+                nave.velocidade.x=-1.25;
+                nave.velocidade.y=0;
+                break;
 
-        default:
-            break;
+            default:
+                break;
         }  
     }
 }
@@ -388,6 +449,7 @@ void setaNaoPressionada(int key, int x, int y) {
 
 // Callback: atualiza valores dos objetos
 void atualizaCena(int valor){
+    // se estiver em jogo
     if(gameState == InGame){
         // atualiza posicao da nave
         nave.posicao.x += nave.velocidade.x;
@@ -415,6 +477,9 @@ void atualizaCena(int valor){
             inimigo->posicao.y += inimigo->velocidade.y;
         }
 
+        // contador eh uma variavel que controla o tempo para
+        // que os inimigos mudem de direcao
+
         // contador nunca eh maior que o maximo...
         contador += 1;
         if (contador > contadorMax)
@@ -426,7 +491,7 @@ void atualizaCena(int valor){
         for (int i = 0; i < getSize(inimigos); i++){
             ObjetoJogo * inimigo = getObjetoJogo(inimigos, i);
             inimigo->velocidade.x = direcao.x * 1;
-            inimigo->velocidade.y = direcao.y * 0.25;
+            inimigo->velocidade.y = direcao.y * (0.25 * ((float)(fase)/3));
         }
 
         // remove todos os tiros que sairam da tela
@@ -435,17 +500,28 @@ void atualizaCena(int valor){
         // remover tiros e inimigos que colidiram
         removeInimigosAcertados();
 
-        // se inimigo alcancou a nave ou a base no mundo, terminar o jogo
-        for(int i = 0; i< getSize(inimigos); i++){
+        // se nao tem mais inimigos, passa para proxima fase
+        if (isEmpty(inimigos)){
+            contador = 0;
+            criarInimigos();
+            fase += 1;
+        }
+
+        // se inimigo alcancou a nave ou a base no mundo, perder uma vida e destruir inimigo
+        for(int i = getSize(inimigos) - 1; i >= 0; i--){
             ObjetoJogo * inimigo = getObjetoJogo(inimigos, i);
             if(objetoColideCom(nave, *inimigo) || inimigo->posicao.y < 0){
-                gameState=GameOver;
-                liberarMemoria();
-                break;
+                vidas -= 1;
+                pop(&inimigos, i);
             }
         }
+
+        // se acabou as vidas, game over
+        if (vidas <= 0){
+            gameState=GameOver;
+            liberarMemoria();
+        }
     }
-    
 
     // manda redesenhar a cena
     glutPostRedisplay();
